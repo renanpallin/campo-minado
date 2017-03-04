@@ -1,0 +1,37 @@
+{
+  "name": "campo_minado",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev": "webpack-dev-server --progress --colors --watch",
+    "dev-hot": "webpack-dev-server --inline --hot",
+    "dev-dashboard": "./node_modules/webpack-dashboard/bin/webpack-dashboard.js webpack-dev-server --progress --colors --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renanpallin/campo-minado.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/renanpallin/campo-minado/issues"
+  },
+  "homepage": "https://github.com/renanpallin/campo-minado#readme",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0",
+    "react-hot-loader": "^1.3.1",
+    "webpack": "^2.2.1",
+    "webpack-dashboard": "^0.3.0",
+    "webpack-dev-server": "^2.3.0"
+  }
+}
+
