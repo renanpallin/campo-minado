@@ -9,8 +9,8 @@ export default class App extends React.Component {
 	constructor(props){
 		super(props);
 
-		this.MAX_BOMBS = 16;
-		let lado = Math.sqrt(this.MAX_BOMBS);
+		this.MAX_SQUARES = 4**2;
+		let lado = Math.sqrt(this.MAX_SQUARES);
 		let idIterator = this.getGeneratorId(lado);
 
 		/*
@@ -31,23 +31,43 @@ export default class App extends React.Component {
 				)
 			);
 
-
-			// console.log('BUCETA', arrayBombs.map((linha, i) => linha.map(e => e.id)));
-
-
+		/* Mock de bombs */
+		// arrayBombs[0][2].isBomb = true;
+		// arrayBombs[1][2].isBomb = true;
+		// arrayBombs[3][2].isBomb = true;
+		// arrayBombs[1][1].isBomb = true;
 
 		arrayBombs.map((line, lineIndex, matriz) => {
-				matriz.incrementDisplay = function(x, y){
-					if (this[x] && this[x][y])
-						return ++this[x][y].displayValue;
-					return null
+				/** ATENÇÃO!!!!
+				 * Javascript não possui array bidimensiona.
+				 * Para solucionar isso, matriz é um array de arrays,
+				 * onde o primeiro array representam as linhas da minha matriz
+				 * e o segunto array, as "colunas" desta linha, que vem a ser um 
+				 * único objeto.
+				 * No plano carteziano (que é para onde minha função geradora de
+				 * id foi feita), buscamos primeiro a coluna X e depois a linha Y,
+				 * aqui, temos que buscar o contrário, primeiro nossa linha Y e 
+				 * depois nossa coluna X.
+				 *
+				 * Por este motivo, para simular um array bidimensional e lê-lo
+				 * com pares ordenados similares aos do plano carteziano, x e y
+				 * foram invertidos nos parâmetros desta função.
+				 */
+				matriz.incrementDisplay = function(y, x){
+					if (this[x] && this[x][y]){
+						// console.log("Incrementando", this[x][y].id)
+						this[x][y].displayValue++;
+					}
 				}
 
+
 				line.map((bomb, i) => {
-					console.log("Bomb =>", bomb);
+					// console.log("Bomb =>", bomb);
 
 					if (!bomb.isBomb)
 						return bomb;
+
+					// console.log('---- BOMBA ENCONTRADA ----', bomb.id);
 
 					let {x, y} = bomb.id;
 
@@ -63,6 +83,7 @@ export default class App extends React.Component {
 					matriz.incrementDisplay(x-1, y+1);
 					matriz.incrementDisplay(x-1, y-1);
 
+					this.done = true;
 					// console.log("Before", matriz[x][y]);
 					// matriz.get(x, y).displayValue = 'CARALHO MAANOOO';
 					// console.log("After", matriz[x][y]);
@@ -70,60 +91,6 @@ export default class App extends React.Component {
 				})
 			}
 		)
-
-					// console.log("x: ", x, "y: ",y);
-				// console.log(matriz.get(x,y));	
-				// console.log("Before", matriz[x][y]);
-				// let current = matriz[x][y];
-				// if(current && !current.isBomb)
-				// 	current.displayValue99;
-				// console.log("After", matriz[x][y]);
-		// [[b1, b1, b1],
-		// [b2, b2, b2]]
-		// arrayBombs.map((bomb, i, arr) => {
-		// 			if (!bomb.isBomb)
-		// 				return bomb;
-		// 			let key;
-
-		// 			let {x, y} = bomb.id;
-		// 			let incX = x + 1
-		// 			if (arr[incX]){
-		// 				arr[incX].displayValue++;
-		// 				if (arr[incX + ])
-		// 			}
-
-		// 			console.log(bomb.id, "é uma bomba!");
-		// 			/* Laterais */
-		// 			if (arr[bomb.id.x + 1] && !arr[bomb.id + 1].isBomb)
-		// 				arr[bomb.id + 1].displayValue++;
-
-		// 			if (arr[bomb.id - 1] && !arr[bomb.id - 1].isBomb)
-		// 				arr[bomb.id - 1].displayValue++;
-
-		// 			if (arr[bomb.id + lado] && !arr[bomb.id + lado].isBomb)
-		// 				arr[bomb.id + lado].displayValue++;
-
-		// 			if (arr[bomb.id - lado] && !arr[bomb.id - lado].isBomb)
-		// 				arr[bomb.id - lado].displayValue++;
-
-		// 			/* Diagonais */
-		// 			if (arr[bomb.id + lado + 1] && !arr[bomb.id + lado + 1].isBomb)
-		// 				arr[bomb.id + lado + 1].displayValue++;
-
-		// 			if (arr[bomb.id + lado - 1] && !arr[bomb.id + lado - 1].isBomb)
-		// 				arr[bomb.id + lado - 1].displayValue++;
-
-		// 			if (arr[bomb.id - lado + 1] && !arr[bomb.id - lado + 1].isBomb)
-		// 				arr[bomb.id - lado + 1].displayValue++;
-
-		// 			if (arr[bomb.id - lado - 1] && !arr[bomb.id - lado - 1].isBomb)
-		// 				arr[bomb.id - lado - 1].displayValue++;
-
-		// 			bomb.displayValue = "*";
-		// 		})
-
-		// console.log(arrayBombs);
-
 
 		this.state = {
 			squares: arrayBombs
@@ -154,7 +121,7 @@ export default class App extends React.Component {
 		let squares = this.state.squares.slice();
 		squares[e.target.id].wasClicked = true;
 		this.setState({squares});
-		console.log('atualizado');
+		// console.log('atualizado');
 	}
 
 	// bomb.wasClicked ? bomb.isBomb : false
@@ -168,7 +135,7 @@ export default class App extends React.Component {
 			})
 		})
 
-		linguiçona.map(bomb => {
+		let linguiçonaHTML = linguiçona.map(bomb => {
 			let bombId = bomb.id.x + '-' + bomb.id.y;
 			return <PossibleBomb 
 								key={bombId}
@@ -181,7 +148,7 @@ export default class App extends React.Component {
 		})
 									// {bomb.wasClicked ? bomb.displayValue : ""}
 
-		// console.log('[LINGUIÇONA]', linguiçona);
+		// console.log('[LINGUIÇONA]', linguiçonaHTML);
 
 		let board = [];
 
@@ -190,8 +157,8 @@ export default class App extends React.Component {
 		let end = rowLength;
 		let times = rowLength;
 		while(times-- > 0){
-			console.log("[SLICE]", linguiçona.slice(start, end));
-			board.push(<div key={times} className="board-row">{linguiçona.slice(start, end)}</div>);
+			// console.log("[SLICE]", linguiçonaHTML.slice(start, end));
+			board.push(<div key={times} className="board-row">{linguiçonaHTML.slice(start, end)}</div>);
 			start += rowLength;
 			end += rowLength;
 		}
@@ -203,8 +170,10 @@ export default class App extends React.Component {
 
 
 	render(){
-		let bombs = this.getSquaresBombs(this.MAX_BOMBS);
-		console.log("Render", bombs.constructor)
+		let bombs = this.getSquaresBombs(this.MAX_SQUARES);
+		// console.log("Render", bombs)
+		// bombs = ['poha', 'caralho', 'buceta'].map(palavrao => <h1>palavrao</h1>)
+		// console.log(bombs);
 		return (
 			<div>
 				<Scores />
