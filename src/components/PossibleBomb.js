@@ -16,7 +16,7 @@ export default class PossibleBomb extends React.Component {
 			<button className="square"
 							id={this.props.id}
 							onClick={this.handleClick}
-							data-bomb={this.props.bomb} >
+							data-bomb={this.props.isBomb} >
 							{this.props.children}
 			</button>
 		)
