@@ -97,9 +97,14 @@ export default class App extends React.Component {
 		}
 	}
 
-	// componentDidMount(){
-	// 	console.log("Did mount", this.state.squares.map(e => e.id));
-	// }
+	componentDidMount(){
+		console.log("Did mount", this.state.squares.map(e => e.id));
+		// window.g = this.getGeneratorId(5);
+		// for (let value of g){
+		// 	console.log(value)
+		// }
+		// console.log(g)
+	}
 
 	getGeneratorId(cols){
 		return (function* idMaker(cols){
@@ -107,11 +112,12 @@ export default class App extends React.Component {
 			let y = 0;
 
 			while (y < cols) {
+				yield {x: x++,y}
+
 				if (x >= cols){
 					x = 0;
-					y++
+					++y;
 				}
-				yield {x: x++,y}
 			}
 		})(cols)
 	}
