@@ -83,7 +83,9 @@ export default class App extends React.Component {
 					matriz.incrementDisplay(x-1, y+1);
 					matriz.incrementDisplay(x-1, y-1);
 
+					/* Sinceramente, não sei qual é o uso dessa linha... */
 					this.done = true;
+
 					// console.log("Before", matriz[x][y]);
 					// matriz.get(x, y).displayValue = 'CARALHO MAANOOO';
 					// console.log("After", matriz[x][y]);
@@ -97,14 +99,14 @@ export default class App extends React.Component {
 		}
 	}
 
-	componentDidMount(){
-		console.log("Did mount", this.state.squares.map(e => e.id));
-		// window.g = this.getGeneratorId(5);
-		// for (let value of g){
-		// 	console.log(value)
-		// }
-		// console.log(g)
-	}
+	// componentDidMount(){
+	// 	console.log("Did mount", this.state.squares.map(linha => linha.map(e => e.id)));
+	// 	window.g = this.getGeneratorId(5);
+	// 	for (let value of g){
+	// 		console.log(value)
+	// 	}
+	// 	// console.log(g)
+	// }
 
 	getGeneratorId(cols){
 		return (function* idMaker(cols){
@@ -122,10 +124,18 @@ export default class App extends React.Component {
 		})(cols)
 	}
 
+	recoverObjectIdByHtmlId(htmlId){
+		let [y, x] = htmlId.split('-');
+		return {y, x};
+	}
+
 	handleClick(e){
-		console.log(e.target);
+		// console.log(e.target);
 		let squares = this.state.squares.slice();
-		squares[e.target.id].wasClicked = true;
+		let {x, y} = this.recoverObjectIdByHtmlId(e.target.id);
+		
+		console.warn(squares[x][y].id);
+		squares[x][y].wasClicked = true;
 		this.setState({squares});
 		// console.log('atualizado');
 	}
