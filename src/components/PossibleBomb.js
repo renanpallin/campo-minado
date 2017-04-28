@@ -12,11 +12,16 @@ export default class PossibleBomb extends React.Component {
 	}
 
 	render(){
+		let style = {
+			backgroundColor: this.props.wasClicked ? (this.props.isBomb ? "red" : "green")  : ""
+		}
+
 		return (
 			<button className="square"
 							id={this.props.id}
 							onClick={this.handleClick}
-							data-bomb={this.props.isBomb} >
+							data-bomb={this.props.isBomb}
+							style={style} >
 							{this.props.children}
 			</button>
 		)
