@@ -10,7 +10,8 @@ export default class App extends React.Component {
 		super(props);
 
 		this.MAX_SQUARES = 10**2;
-		let lado = Math.sqrt(this.MAX_SQUARES);
+		this.MAX_LADO = Math.sqrt(this.MAX_SQUARES);
+		let lado = this.MAX_LADO;
 		let idIterator = this.getGeneratorId(lado);
 
 		/*
@@ -24,7 +25,7 @@ export default class App extends React.Component {
 				line.map(e =>
 					({
 						id: idIterator.next().value,
-						isBomb: Math.random() >= 0.7,
+						isBomb: Math.random() >= 0.85,
 						wasClicked: false,
 						displayValue: 0,
 						_equals: function(id){
@@ -48,21 +49,28 @@ export default class App extends React.Component {
 				Array.prototype._callNeighbors = function(id, callback){
 					// console.log(id);
 					let {x, y} = id;
+					// console.log("QUI", this[x][y]);
+					// this[x][y].displayValue == 0
+					// 
+					// TODO: Essa ideia de fromZero, apesar de "boa", não funcionou...
+					// então tira ssapoha aí depois
+					let fromZero = this[x][y].displayValue == 0;
+					console.error('FROM ZERO IN CALLNEIGHBORS', fromZero);
 					/* Laterais */
-					callback.call(this, {x: x  , y: y+1});
-					callback.call(this, {x: x  , y: y-1});
-					callback.call(this, {x: x+1, y: y  });
-					callback.call(this, {x: x-1, y: y  });
+					callback.call(this, {x: x  , y: y+1}, fromZero);
+					callback.call(this, {x: x  , y: y-1}, fromZero);
+					callback.call(this, {x: x+1, y: y  }, fromZero);
+					callback.call(this, {x: x-1, y: y  }, fromZero);
 
 					/* Diagonais */
-					callback.call(this, {x: x+1, y: y+1});
-					callback.call(this, {x: x+1, y: y-1});
-					callback.call(this, {x: x-1, y: y+1});
-					callback.call(this, {x: x-1, y: y-1});
+					callback.call(this, {x: x+1, y: y+1}, fromZero);
+					callback.call(this, {x: x+1, y: y-1}, fromZero);
+					callback.call(this, {x: x-1, y: y+1}, fromZero);
+					callback.call(this, {x: x-1, y: y-1}, fromZero);
 				}
 
 				/**
-				 * Incrementa 1 no displayVale dos vizinhos
+				 * Incrementa 1 no displayValue dos vizinhos
 				 * @param  {[Object]}   id  {x, y}
 				 * @return {[type]}    [description]
 				 */
@@ -171,7 +179,7 @@ export default class App extends React.Component {
 			y: parseInt(parString[1])
 		}
 
-		console.log(idClicado);
+		// console.log(idClicado);
 		// console.log(this.state.squares);
 
 		let squares = this.state.squares.map((line, lineIndex, matriz) => 
@@ -182,13 +190,45 @@ export default class App extends React.Component {
 					if(bomb.isBomb){
 						console.warn("BOOOOOOOOMMMMMMM");
 					} else {
-						matriz._callNeighbors(bomb.id, ({x, y}) =>{
-							[x, y] = [y, x];
-							console.log("Checando", x, y);
-							if(matriz[x] && matriz[x][y] && !matriz[x][y].isBomb){
-								matriz[x][y].wasClicked = true;
+						/*
+						TODO: Se for zero, abrir os vizinhos e fazer tipo um middleware
+						para todos eles abrirem os vizinhos se forem 0
+						 */
+						if(bomb.displayValue == 0){
+							matriz._callNeighbors(bomb.id, id => {
+								let {x, y} = id; 
+								[x, y] = [y, x];
+
+								if(matriz[x] && matriz[x][y]){
+									matriz[x][y].wasClicked = true;
+								}
+							})
+						} else {
+							let recurse = function(id, fromZero){
+								console.warn(id, 'fromZero', fromZero);
+								// console.log('ID Valido', id);
+								let {x, y} = id; 
+								[x, y] = [y, x];
+								console.log("Checando", x, y);
+								if(matriz[x] && matriz[x][y] && 
+									!matriz[x][y].isBomb && 
+									!matriz[x][y].wasClicked && 
+									matriz[x][y].displayValue === 0/* && fromZero*/){
+										matriz[x][y].wasClicked = true;
+										console.log("Chamando a recursiva")
+										matriz._callNeighbors(id, recurse);
+								}
 							}
-						});
+							
+							matriz._callNeighbors(bomb.id, recurse);
+
+						}
+
+
+
+
+
+
 					}
 				}
 				return bomb;
@@ -220,11 +260,11 @@ export default class App extends React.Component {
 								wasClicked={bomb.wasClicked}
 								isBomb={bomb.isBomb} 
 								clickBomb={e => this.handleClick(e)}>
-									{bomb.wasClicked ? bomb.displayValue : ""}
-
+									{bomb.displayValue}
+									
 						</PossibleBomb>
 		})
-									// 
+									// {bomb.wasClicked ? bomb.displayValue : ""}
 
 		// console.log('[LINGUIÇONA]', linguiçonaHTML);
 
