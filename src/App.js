@@ -26,7 +26,11 @@ export default class App extends React.Component {
 						id: idIterator.next().value,
 						isBomb: Math.random() >= 0.7,
 						wasClicked: false,
-						displayValue: 0
+						displayValue: 0,
+						_equals: function(id){
+							// console.log('this', this.id);
+							return this.id.x === id.x && this.id.y === id.y;
+						}
 					})
 				)
 			);
@@ -56,7 +60,9 @@ export default class App extends React.Component {
 				matriz.incrementDisplay = function(y, x){
 					if (this[x] && this[x][y]){
 						// console.log("Incrementando", this[x][y].id)
-						this[x][y].displayValue++;
+						if (!this[x][y].isBomb){
+							this[x][y].displayValue++;
+						}
 					}
 				}
 
@@ -70,6 +76,7 @@ export default class App extends React.Component {
 					// console.log('---- BOMBA ENCONTRADA ----', bomb.id);
 
 					let {x, y} = bomb.id;
+					bomb.displayValue = "*";
 
 					/* Laterais */
 					matriz.incrementDisplay(x, y+1);
@@ -83,8 +90,6 @@ export default class App extends React.Component {
 					matriz.incrementDisplay(x-1, y+1);
 					matriz.incrementDisplay(x-1, y-1);
 
-					/* Sinceramente, não sei qual é o uso dessa linha... */
-					this.done = true;
 
 					// console.log("Before", matriz[x][y]);
 					// matriz.get(x, y).displayValue = 'CARALHO MAANOOO';
@@ -98,15 +103,6 @@ export default class App extends React.Component {
 			squares: arrayBombs
 		}
 	}
-
-	// componentDidMount(){
-	// 	console.log("Did mount", this.state.squares.map(linha => linha.map(e => e.id)));
-	// 	window.g = this.getGeneratorId(5);
-	// 	for (let value of g){
-	// 		console.log(value)
-	// 	}
-	// 	// console.log(g)
-	// }
 
 	getGeneratorId(cols){
 		return (function* idMaker(cols){
@@ -159,7 +155,7 @@ export default class App extends React.Component {
 								wasClicked={bomb.wasClicked}
 								isBomb={bomb.isBomb} 
 								clickBomb={e => this.handleClick(e)}>
-									{bomb.isBomb ? "*" : bomb.displayValue}
+									{bomb.displayValue}
 						</PossibleBomb>
 		})
 									// {bomb.wasClicked ? bomb.displayValue : ""}
