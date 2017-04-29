@@ -9,7 +9,7 @@ export default class App extends React.Component {
 	constructor(props){
 		super(props);
 
-		this.MAX_SQUARES = 14**2;
+		this.MAX_SQUARES = 10**2;
 		this.LADO = Math.sqrt(this.MAX_SQUARES);
 		let idIterator = this.getGeneratorId(this.LADO);
 
@@ -24,7 +24,7 @@ export default class App extends React.Component {
 				line.map(e => 
 					({
 						id: idIterator.next().value,
-						isBomb: Math.random() >= 0.85,
+						isBomb: Math.random() >= 0.80,
 						wasClicked: false,
 						displayValue: 0,
 						_equals: function(id){
@@ -214,6 +214,11 @@ export default class App extends React.Component {
 			this.openNeighborsBecouseItsZero(id);
 
 		this.setState({squares});
+
+		setTimeout(() => {
+			if (bomb.isBomb)
+				alert("BOOOOMMMM")
+		},100)
 		// console.log('atualizado');
 	}
 
@@ -236,7 +241,7 @@ export default class App extends React.Component {
 								wasClicked={bomb.wasClicked}
 								isBomb={bomb.isBomb} 
 								clickBomb={e => this.handleClick(e)}>
-									{bomb.displayValue}
+									{bomb.wasClicked ? bomb.displayValue : ""}
 						</PossibleBomb>
 		})
 									// {bomb.wasClicked ? bomb.displayValue : ""}
