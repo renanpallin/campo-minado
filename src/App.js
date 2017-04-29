@@ -9,7 +9,7 @@ export default class App extends React.Component {
 	constructor(props){
 		super(props);
 
-		this.MAX_SQUARES = 10**2;
+		this.MAX_SQUARES = Math.pow(10, 2);
 		this.LADO = Math.sqrt(this.MAX_SQUARES);
 		let idIterator = this.getGeneratorId(this.LADO);
 
