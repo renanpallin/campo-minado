@@ -217,11 +217,12 @@ export default class App extends React.Component {
 		let {x, y} = id;
 
 		console.warn(squares[x][y].id);
-		squares[x][y].wasClicked = true;
+		let bomb = squares[x][y];
+		bomb.wasClicked = true;
 
-		if (squares[x][y].isBomb)
-			console.warn("BOOOOMMMM");
-		else
+		if (bomb.isBomb)
+			console.warn("BOOOOMMMM")
+		else if (bomb.displayValue === 0)
 			this.openNeighbors(id);
 
 		this.setState({squares});
