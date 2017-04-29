@@ -273,7 +273,7 @@ export default class App extends React.Component {
 		// bombs = ['poha', 'caralho', 'buceta'].map(palavrao => <h1>palavrao</h1>)
 		// console.log(bombs);
 		return (
-			<div>
+			<div className="col-md-10 col-sm-12 col-md-offset-1">
 				<Scores />
 				<Board squares={bombs} />
 			</div>

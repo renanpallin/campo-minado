@@ -13,7 +13,7 @@ export default class PossibleBomb extends React.Component {
 
 	render(){
 		let style = {
-			backgroundColor: this.props.wasClicked ? (this.props.isBomb ? "red" : "green")  : ""
+			backgroundColor: this.props.wasClicked ? (this.props.isBomb ? "#e74c3c" : "#009871")  : "#464545"
 		}
 
 		return (

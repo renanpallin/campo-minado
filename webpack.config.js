@@ -10,7 +10,7 @@ module.exports = {
 		'./src'
 	],
 	output: {
-		path: path.join(__dirname, 'public'),
+		path: path.join(__dirname, 'public', 'js'),
 		filename: 'bundle.js'
 	},
 	resolve: {
@@ -32,5 +32,9 @@ module.exports = {
 		new webpack.HotModuleReplacementPlugin(),
 		new webpack.NoEmitOnErrorsPlugin(),
 		new DashboardPlugin()
-	]
+	],
+	devServer: {
+		contentBase: path.join(__dirname, "public"),
+		publicPath: "/js/"
+	}
 }
