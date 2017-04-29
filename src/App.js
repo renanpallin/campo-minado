@@ -9,22 +9,22 @@ export default class App extends React.Component {
 	constructor(props){
 		super(props);
 
-		this.MAX_SQUARES = 4**2;
-		let lado = Math.sqrt(this.MAX_SQUARES);
-		let idIterator = this.getGeneratorId(lado);
+		this.MAX_SQUARES = 14**2;
+		this.LADO = Math.sqrt(this.MAX_SQUARES);
+		let idIterator = this.getGeneratorId(this.LADO);
 
 		/*
 		[[bomb, bomb, bomb],
 		[bomb, bomb, bomb],
 		[bomb, bomb, bomb]]
 		 */
-		let arrayBombs = Array(lado)
-			.fill(Array(lado).fill())
+		let arrayBombs = Array(this.LADO)
+			.fill(Array(this.LADO).fill())
 			.map(line => 
 				line.map(e => 
 					({
 						id: idIterator.next().value,
-						isBomb: Math.random() >= 0.7,
+						isBomb: Math.random() >= 0.85,
 						wasClicked: false,
 						displayValue: 0,
 						_equals: function(id){
@@ -125,13 +125,105 @@ export default class App extends React.Component {
 		return {y, x};
 	}
 
+	_callUp({x, y}, cb){
+		// console.log("[_callUp] y =>", y);
+		( --y >= 0) && cb({x, y});
+	}
+	_callDown({x, y}, cb){
+		// console.log("[_callDown] y =>", y);
+		( ++y < this.LADO) && cb({x, y});
+	}
+	_callLeft({x, y}, cb){
+		// console.log("[_callLeft] x =>", x);
+		( --x >= 0) && cb({x, y});
+	}
+	_callRight({x, y}, cb){
+		// console.log("[_callRight] x =>", x);
+		( ++x < this.LADO) && cb({x, y});
+	}
+
+	_callUpRight({x, y}, cb){
+		// console.log("[_callUpRight] y =>", y);
+		( --y >= 0) && ( ++x < this.LADO) && cb({x, y});
+	}
+	_callUpLeft({x, y}, cb){
+		// console.log("[_callUpLeft] y =>", y);
+		( --y >= 0) && ( --x >= 0) && cb({x, y});
+	}
+	_callDownRight({x, y}, cb){
+		// console.log("[_callDownRight] y =>", y);
+		( ++y < this.LADO) && ( ++x < this.LADO) && cb({x, y});
+	}
+	_callDownLeft({x, y}, cb){
+		// console.log("[_callDownLeft] y =>", y);
+		( ++y < this.LADO) && ( --x >= 0) && cb({x, y});
+	}
+
+	callInAllDirections({x, y}, cb){
+		this._callUp({x,y}, cb);
+		this._callDown({x,y}, cb);
+		this._callLeft({x,y}, cb);
+		this._callRight({x,y}, cb);
+
+		this._callUpRight({x,y}, cb);
+		this._callUpLeft({x,y}, cb);
+		this._callDownRight({x,y}, cb);
+		this._callDownLeft({x,y}, cb);
+	}
+
+	openNeighbors({x, y}){
+		// [x, y] = [y, x];
+		/* Em todas as direções, todos usarão o mesmo clone do state.squares */
+		let newSquares = this.state.squares.slice();
+		// NÃO É UM CLONE, O SLICE ESTÁ ME PASSANDO A REFERÊNCIA
+
+		// [x, y] = [y, x]; 
+		let recourse = ({x, y}) => {
+			console.info("CALLBACK:", x, y)
+
+			this.callInAllDirections({x, y}, ({x, y}) => {
+				let bomb = newSquares[x][y];
+				console.log("PossibleBomb vizinha", bomb.id, bomb.isBomb, bomb.displayValue);
+				
+				if (bomb.wasClicked)
+					return;
+				if (bomb.isBomb)
+					return;
+				if (bomb.displayValue !== 0)
+					return;
+
+				console.log("Deveria estar chamando para ", x, y)
+				bomb.wasClicked = true;
+				recourse({x,y});
+				
+				// this.callInAllDirections(bomb.id, ({x, y}) => {
+				// 	[x, y] = [y, x]; 
+
+				// 	recourse(bomb.id);
+				// });
+
+				
+			});
+		};
+
+		recourse({x, y})
+		// console.log("[openNeighbors]", x, y);
+	}
+
 	handleClick(e){
 		// console.log(e.target);
 		let squares = this.state.squares.slice();
-		let {x, y} = this.recoverObjectIdByHtmlId(e.target.id);
-		
+		let id = this.recoverObjectIdByHtmlId(e.target.id);
+		let {x, y} = id;
+
 		console.warn(squares[x][y].id);
 		squares[x][y].wasClicked = true;
+
+		if (squares[x][y].isBomb)
+			console.warn("BOOOOMMMM");
+		else
+			this.openNeighbors(id);
+
 		this.setState({squares});
 		// console.log('atualizado');
 	}
