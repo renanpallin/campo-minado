@@ -2,9 +2,48 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Campo Minado</title>
+
+	<style>
+		.board-row:after {
+		  clear: both;
+		  content: "";
+		  display: table;
+		}
+
+		.status {
+		  margin-bottom: 10px;
+		}
+
+		.square {
+		  background: #fff;
+		  border: 1px solid #999;
+		  float: left;
+		  font-size: 24px;
+		  font-weight: bold;
+		  line-height: 34px;
+		  height: 80px;
+		  /*height: 34px;*/
+		  margin-right: -1px;
+		  margin-top: -1px;
+		  padding: 0;
+		  text-align: center;
+		  width: 80px;
+		  /*width: 34px;*/
+		}
+	</style>
+
+	<link rel="stylesheet" href="https://bootswatch.com/darkly/bootstrap.min.css">
 </head>
 <body>
-	<h1>aew carai!</h1>
+	<div class="container">
+		<div id="app"></div>
+		<blockquote class="pull-right">
+		  <p>I made this!</p>
+		  <small>Renan Pallin <cite title="Source Title">renanpallin@gmail.com</cite></small>
+		</blockquote>
+	</div>
+
+	<script src="js/bundle.js" type="text/javascript" charset="utf-8" async defer></script>
 </body>
 </html>
