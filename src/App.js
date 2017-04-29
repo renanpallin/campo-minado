@@ -171,47 +171,35 @@ export default class App extends React.Component {
 		this._callDownLeft({x,y}, cb);
 	}
 
-	openNeighbors({x, y}){
-		// [x, y] = [y, x];
-		/* Em todas as direções, todos usarão o mesmo clone do state.squares */
+	openNeighborsBecouseItsZero({x, y}){
+		/* Em todas as direções, todos usarão a mesma referência do state.squares */
 		let newSquares = this.state.squares.slice();
-		// NÃO É UM CLONE, O SLICE ESTÁ ME PASSANDO A REFERÊNCIA
 
-		// [x, y] = [y, x]; 
 		let recourse = ({x, y}) => {
-			console.info("CALLBACK:", x, y)
+			// console.info("CALLBACK - ZERADO:", x, y)
 
 			this.callInAllDirections({x, y}, ({x, y}) => {
 				let bomb = newSquares[x][y];
-				console.log("PossibleBomb vizinha", bomb.id, bomb.isBomb, bomb.displayValue);
+				// console.log("PossibleBomb vizinha", bomb.id, bomb.isBomb, bomb.displayValue);
 				
 				if (bomb.wasClicked)
 					return;
 				if (bomb.isBomb)
 					return;
+
+				bomb.wasClicked = true;
 				if (bomb.displayValue !== 0)
 					return;
 
-				console.log("Deveria estar chamando para ", x, y)
-				bomb.wasClicked = true;
-				recourse({x,y});
-				
-				// this.callInAllDirections(bomb.id, ({x, y}) => {
-				// 	[x, y] = [y, x]; 
-
-				// 	recourse(bomb.id);
-				// });
-
-				
+				// console.log("Chamando recursiva para ", x, y)
+				recourse({x,y});				
 			});
 		};
 
 		recourse({x, y})
-		// console.log("[openNeighbors]", x, y);
 	}
 
 	handleClick(e){
-		// console.log(e.target);
 		let squares = this.state.squares.slice();
 		let id = this.recoverObjectIdByHtmlId(e.target.id);
 		let {x, y} = id;
@@ -223,7 +211,7 @@ export default class App extends React.Component {
 		if (bomb.isBomb)
 			console.warn("BOOOOMMMM")
 		else if (bomb.displayValue === 0)
-			this.openNeighbors(id);
+			this.openNeighborsBecouseItsZero(id);
 
 		this.setState({squares});
 		// console.log('atualizado');
